@@ -77,8 +77,8 @@
                             <span class="badge badge-danger">25</span>
                         </a>
                     </li>
-                    <li class="nav-item {{ request()->is('icons') ? 'active' : '' }}">
-                        <a href="icons.html">
+                    <li class="nav-item {{ request()->is('fillieres.index') ? 'active' : '' }}">
+                        <a href="{{ route('fillieres.index') }}">
                             <i class="la la-fonticons"></i>
                             <p>Fillieres</p>
                         </a>
