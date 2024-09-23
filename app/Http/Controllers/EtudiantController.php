@@ -45,18 +45,19 @@ class EtudiantController extends Controller
             'prix' => 'nullable|numeric',
         ]);
 
-        // Create new student (etudiant)
+        // Creé un nouveau etudiant
         $etudiant = Etudiant::create([
             'nom' => $validatedData['nom'],
             'prenom' => $validatedData['prenom'],
             'date_de_naissance' => $validatedData['date_de_naissance'],
         ]);
 
-        // Associate the etudiant with a groupe
+        // associer l'étudiant avec le groupe
         $etudiant->groupes()->attach($validatedData['groupe_id']);
 
-        // Handle filiere and niveau if necessary
+        
         $filiere = Filiere::where('nom_filiere', $validatedData['filiere'])->first();
+        // first retrouve le premier element
         $niveau = Niveau::where('nom_niveau', $validatedData['niveau'])->first();
 
         // Handle matieres (many-to-many relationship)
@@ -77,6 +78,7 @@ class EtudiantController extends Controller
         }
 
         // Redirect or return a success message
+        // succes est un alias du message
         return redirect()->route('etudiants.index')->with('success', 'Etudiant créé avec succès');
     }
 
@@ -91,45 +93,7 @@ class EtudiantController extends Controller
         return view('pages.etudiants.edit', compact('etudiant', 'groupes', 'filieres', 'niveaux', 'matieres'));
     }
 
-    // public function update(Request $request, $id)
-    // {
-    //     $etudiant = Etudiant::findOrFail($id);
-
-    //     // Validate form data
-    //     $validatedData = $request->validate([
-    //         'nom' => 'required|string|max:255',
-    //         'prenom' => 'required|string|max:255',
-    //         'date_de_naissance' => 'required|date',
-    //         'groupe_id' => 'required|exists:groupes,id',
-    //         'filiere' => 'required|string',
-    //         'niveau' => 'required|string',
-    //         'matieres' => 'array',
-    //         'statutpaiement' => 'required|string',
-    //         'date_paiement' => 'nullable|date',
-    //         'prix' => 'nullable|numeric',
-    //     ]);
-
-    //     // Update etudiant
-    //     $etudiant->update([
-    //         'nom' => $validatedData['nom'],
-    //         'prenom' => $validatedData['prenom'],
-    //         'date_de_naissance' => $validatedData['date_de_naissance'],
-    //     ]);
-
-    //     // Update associations
-    //     $etudiant->groupes()->sync($validatedData['groupe_id']);
-
-    //     // Handle filiere and niveau if necessary (update logic based on your requirements)
-
-    //     if (!empty($validatedData['matieres'])) {
-    //         $matiereIds = Matiere::whereIn('nom_matiere', $validatedData['matieres'])->pluck('id');
-    //         $etudiant->matieres()->sync($matiereIds);
-    //     }
-
-    //     // Update paiement if provided (similar to store logic)
-
-    //     return redirect()->route('etudiants.index')->with('success', 'Etudiant modifié avec succès');
-    // }
+    
 
     public function update(Request $request, $id)
     {
@@ -199,15 +163,15 @@ class EtudiantController extends Controller
     }
 
     public function destroy($id)
-{
-    $etudiant = Etudiant::findOrFail($id);
-    $etudiant->groupes()->detach();
-    $etudiant->matieres()->detach();
-    $etudiant->paiements()->delete();
-    $etudiant->delete();
+    {
+        $etudiant = Etudiant::findOrFail($id); // retrouver l'étudiant par id
+        $etudiant->groupes()->detach();
+        $etudiant->matieres()->detach();
+        $etudiant->paiements()->delete();
+        $etudiant->delete();
 
-    return redirect()->route('etudiants.index')->with('success', 'Etudiant supprimé avec succès');
-}
+        return redirect()->route('etudiants.index')->with('success', 'Etudiant supprimé avec succès');
+    }
 
 
 }

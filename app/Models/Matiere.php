@@ -10,8 +10,7 @@ class Matiere extends Model
     use HasFactory;
     protected $table = "matieres";
     protected $fillable = [
-        'nom_matiere',
-        
+        'nom_matiere'
     ];
 
     public function groupes()

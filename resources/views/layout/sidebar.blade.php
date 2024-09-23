@@ -57,7 +57,7 @@
                         </a>
                     </li>
                     <li class="nav-item {{ request()->is('tables') ? 'active' : '' }}">
-                        <a href="tables.html">
+                        <a href="{{ route('professeurs.index') }}">
                             <i class="la la-th"></i>
                             <p>Professeurs</p>
                             <span class="badge badge-count">6</span>
@@ -70,8 +70,8 @@
                             <span class="badge badge-success">3</span>
                         </a>
                     </li>
-                    <li class="nav-item {{ request()->is('typography') ? 'active' : '' }}">
-                        <a href="typography.html">
+                    <li class="nav-item {{ request()->is('matieres.index') ? 'active' : '' }}">
+                        <a href="{{ route('matieres.index') }}">
                             <i class="la la-font"></i>
                             <p>Matieres</p>
                             <span class="badge badge-danger">25</span>
