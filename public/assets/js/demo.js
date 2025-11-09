@@ -14,17 +14,23 @@ Circles.create({
 	styleText:    true
 })
 
-$.notify({
-	icon: 'la la-bell',
-	title: 'Bootstrap notify',
-	message: 'Turning standard Bootstrap alerts into "notify" like notifications',
-},{
-	type: 'success',
-	placement: {
-		from: "bottom",
-		align: "right"
-	},
-	time: 1000,
+document.addEventListener('DOMContentLoaded', function () {
+	var notification = window.pageNotification || null;
+
+	if (notification && notification.message && typeof $ !== 'undefined' && typeof $.notify === 'function') {
+		$.notify({
+			icon: notification.icon || 'la la-bell',
+			title: notification.title || '',
+			message: notification.message
+		}, {
+			type: notification.type || 'info',
+			placement: notification.placement || {
+				from: 'bottom',
+				align: 'right'
+			},
+			time: notification.time || 2000,
+		});
+	}
 });
 
 // monthlyChart

@@ -1,6 +1,6 @@
     <div class="main-header">
             <div class="logo-header">
-                <a href="index.html" class="logo">
+                <a href="{{ route('dashboard') }}" class="logo">
                     Gestion Scolaire
                 </a>
                 <button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse"
@@ -24,100 +24,122 @@
                     </form>
                     <ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
                         <li class="nav-item dropdown hidden-caret">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarStudentsDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="la la-envelope"></i>
+                                <i class="la la-user-plus"></i>
+                                @if (!empty($recentEtudiants) && count($recentEtudiants) > 0)
+                                    <span class="notification">{{ count($recentEtudiants) }}</span>
+                                @endif
                             </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </li>
-                        <li class="nav-item dropdown hidden-caret">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="la la-bell"></i>
-                                <span class="notification">3</span>
-                            </a>
-                            <ul class="dropdown-menu notif-box" aria-labelledby="navbarDropdown">
+                            <ul class="dropdown-menu notif-box" aria-labelledby="navbarStudentsDropdown">
                                 <li>
-                                    <div class="dropdown-title">You have 4 new notification</div>
-                                </li>
-                                <li>
-                                    <div class="notif-center">
-                                        <a href="#">
-                                            <div class="notif-icon notif-primary"> <i class="la la-user-plus"></i>
-                                            </div>
-                                            <div class="notif-content">
-                                                <span class="block">
-                                                    New user registered
-                                                </span>
-                                                <span class="time">5 minutes ago</span>
-                                            </div>
-                                        </a>
-                                        <a href="#">
-                                            <div class="notif-icon notif-success"> <i class="la la-comment"></i> </div>
-                                            <div class="notif-content">
-                                                <span class="block">
-                                                    Rahmad commented on Admin
-                                                </span>
-                                                <span class="time">12 minutes ago</span>
-                                            </div>
-                                        </a>
-                                        <a href="#">
-                                            <div class="notif-img">
-                                                <img src="assets/img/profile2.jpg" alt="Img Profile">
-                                            </div>
-                                            <div class="notif-content">
-                                                <span class="block">
-                                                    Reza send messages to you
-                                                </span>
-                                                <span class="time">12 minutes ago</span>
-                                            </div>
-                                        </a>
-                                        <a href="#">
-                                            <div class="notif-icon notif-danger"> <i class="la la-heart"></i> </div>
-                                            <div class="notif-content">
-                                                <span class="block">
-                                                    Farrah liked Admin
-                                                </span>
-                                                <span class="time">17 minutes ago</span>
-                                            </div>
-                                        </a>
+                                    <div class="dropdown-title">
+                                        @if (!empty($recentEtudiants) && count($recentEtudiants) > 0)
+                                            {{ count($recentEtudiants) }} nouvel(le)s étudiant(e)s inscrit(e)s
+                                        @else
+                                            Aucune inscription récente
+                                        @endif
                                     </div>
                                 </li>
                                 <li>
-                                    <a class="see-all" href="javascript:void(0);"> <strong>See all
-                                            notifications</strong> <i class="la la-angle-right"></i> </a>
+                                    <div class="notif-center">
+                                        @forelse(($recentEtudiants ?? collect()) as $etudiant)
+                                            <a href="{{ route('etudiants.edit', $etudiant['id']) }}">
+                                                <div class="notif-icon notif-info">
+                                                    <i class="la la-user"></i>
+                                                </div>
+                                                <div class="notif-content">
+                                                    <span class="block">
+                                                        {{ $etudiant['nom'] ?? 'Étudiant' }}
+                                                    </span>
+                                                    @if (!empty($etudiant['created_at']))
+                                                        <span class="time">{{ $etudiant['created_at'] }}</span>
+                                                    @endif
+                                                </div>
+                                            </a>
+                                        @empty
+                                            <span class="small text-muted d-block px-3 py-2">Les dernières inscriptions apparaîtront ici.</span>
+                                        @endforelse
+                                    </div>
+                                </li>
+                                <li>
+                                    <a class="see-all" href="{{ route('etudiants.index') }}"> <strong>Voir tous les étudiants</strong> <i class="la la-angle-right"></i> </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown hidden-caret">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarNotifDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="la la-bell"></i>
+                                <span class="notification">{{ $pendingCommissions ?? 0 }}</span>
+                            </a>
+                            <ul class="dropdown-menu notif-box" aria-labelledby="navbarNotifDropdown">
+                                <li>
+                                    <div class="dropdown-title">
+                                        {{ ($pendingCommissions ?? 0) > 0 ? "{$pendingCommissions} commission(s) à suivre" : 'Aucune notification en attente' }}
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="notif-center">
+                                        @forelse(($latestCommissions ?? collect()) as $commission)
+                                            <a href="{{ route('comissions.edit', $commission['id']) }}">
+                                                <div class="notif-icon {{ ($commission['statut'] ?? '') === 'Payée' ? 'notif-success' : 'notif-danger' }}">
+                                                    <i class="la la-money"></i>
+                                                </div>
+                                                <div class="notif-content">
+                                                    <span class="block">
+                                                        {{ number_format($commission['montant'] ?? 0, 2, ',', ' ') }} MAD
+                                                    </span>
+                                                    <span class="block small text-muted">
+                                                        @if (!empty($commission['etudiant']))
+                                                            {{ $commission['etudiant'] }}
+                                                        @endif
+                                                        @if (!empty($commission['professeur']))
+                                                            • {{ $commission['professeur'] }}
+                                                        @endif
+                                                    </span>
+                                                    @if (!empty($commission['date']))
+                                                        <span class="time">{{ $commission['date'] }}</span>
+                                                    @endif
+                                                    <span class="badge badge-{{ ($commission['statut'] ?? '') === 'Payée' ? 'success' : 'warning' }}">
+                                                        {{ $commission['statut'] ?? 'En attente' }}
+                                                    </span>
+                                                </div>
+                                            </a>
+                                        @empty
+                                            <span class="small text-muted d-block px-3 py-2">Les dernières commissions apparaîtront ici.</span>
+                                        @endforelse
+                                    </div>
+                                </li>
+                                <li>
+                                    <a class="see-all" href="{{ route('comissions.index') }}"> <strong>Voir les commissions</strong> <i class="la la-angle-right"></i> </a>
                                 </li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"
-                                aria-expanded="false"> <img src="assets/img/profile.jpg" alt="user-img"
-                                    width="36" class="img-circle"><span>Hizrian</span></span> </a>
+                                aria-expanded="false"> <img src="{{ asset('assets/img/profile.jpg') }}" alt="user-img"
+                                    width="36" class="img-circle"><span>{{ auth()->user()->name ?? 'Admin' }}</span></span> </a>
                             <ul class="dropdown-menu dropdown-user">
                                 <li>
                                     <div class="user-box">
-                                        <div class="u-img"><img src="assets/img/profile.jpg" alt="user"></div>
+                                        <div class="u-img"><img src="{{ asset('assets/img/profile.jpg') }}" alt="user"></div>
                                         <div class="u-text">
-                                            <h4>Hizrian</h4>
-                                            <p class="text-muted">hello@themekita.com</p><a href="profile.html"
-                                                class="btn btn-rounded btn-danger btn-sm">View Profile</a>
+                                            <h4>{{ auth()->user()->name ?? 'Admin' }}</h4>
+                                            <p class="text-muted mb-2">{{ auth()->user()->email ?? '' }}</p>
+                                            <div class="d-flex flex-column text-start">
+                                                @foreach(($resourceCounts ?? []) as $key => $value)
+                                                    <span class="small text-muted">{{ ucfirst($key) }} : <strong>{{ $value }}</strong></span>
+                                                @endforeach
+                                            </div>
                                         </div>
                                     </div>
                                 </li>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#"><i class="ti-user"></i> My Profile</a>
-                                <a class="dropdown-item" href="#"></i> My Balance</a>
-                                <a class="dropdown-item" href="#"><i class="ti-email"></i> Inbox</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#"><i class="ti-settings"></i> Account
-                                    Setting</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#"><i class="fa fa-power-off"></i> Logout</a>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item"><i class="fa fa-power-off"></i> Déconnexion</button>
+                                </form>
                             </ul>
                             <!-- /.dropdown-user -->
                         </li>

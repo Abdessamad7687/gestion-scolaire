@@ -18,14 +18,6 @@
     </div>
 
     <div style="overflow-x: auto; max-width: 100%;">
-        @if (session('success'))
-            
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ Session::get('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        @endif
-
         <table id="example" class="table table-striped" style="width:100%;">
             <thead>
                 <tr>
@@ -41,8 +33,13 @@
                 <tr>
                     <td>{{ $filiere->id }}</td>
                     <td>{{ $filiere->nom_filiere }}</td>
-                    <td>{{ $filiere->groupes->count() }}</td>    
-                    <td>{{ $filiere->matires }}</td>    
+                    <td>{{ $filiere->groupes->count() }}</td>
+                    <td>
+                        @php
+                            $matiereNames = $filiere->groupes->pluck('matiere.nom_matiere')->filter()->unique()->toArray();
+                        @endphp
+                        {{ !empty($matiereNames) ? implode(' / ', $matiereNames) : 'Aucune matière' }}
+                    </td>
 
                     <td>
                          <div class="row">

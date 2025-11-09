@@ -9,7 +9,7 @@ class FiliereController extends Controller
 {
     public function index()
     {
-        $filieres = Filiere::with('groupes')->get();
+        $filieres = Filiere::with('groupes.matiere')->get();
         return view('pages.fillieres.index', compact('filieres'));
     }
 

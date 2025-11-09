@@ -19,6 +19,7 @@
         @include('layout.navbar');
 
         @include('layout.sidebar');
+        @include('layout.partials.toast')
         <div class="main-panel">
             <div class="content">
                 @yield('content')
@@ -41,7 +42,19 @@
 <script src="{{ asset('assets/js/plugin/chart-circle/circles.min.js') }}"></script>
 <script src="{{ asset('assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
 <script src="{{ asset('assets/js/ready.min.js') }}"></script>
+<script>
+    window.pageNotification = @json($pageNotification ?? null);
+</script>
 <script src="{{ asset('assets/js/demo.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+        toastElList.forEach(function (toastEl) {
+            var toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        });
+    });
+</script>
 </body>
 
 

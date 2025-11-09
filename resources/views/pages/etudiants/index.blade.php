@@ -18,14 +18,6 @@
     </div>
 
     <div style="overflow-x: auto; max-width: 100%;">
-        @if (session('success'))
-            
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ Session::get('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        @endif
-
         <table id="example" class="table table-striped" style="width:100%;">
             <thead>
                 <tr>
