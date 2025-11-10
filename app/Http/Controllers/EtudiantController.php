@@ -16,7 +16,12 @@ class EtudiantController extends Controller
     public function index()
     {
         // Retrouver tous les etudiants de la base de donnée
-        $etudiants = Etudiant::with(['groupes', 'matieres', 'paiements'])->get();
+        $etudiants = Etudiant::with([
+            'groupes.filiere',
+            'groupes.niveau',
+            'matieres',
+            'primaryPaiement',
+        ])->get();
         return view('pages.etudiants.index', compact('etudiants'));
     }
 

@@ -9,6 +9,7 @@ use App\Models\Groupe;
 use App\Models\Matiere;
 use App\Models\Professeur;
 use App\Models\Niveau;
+use App\Models\Paiement;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -37,9 +38,11 @@ class AppServiceProvider extends ServiceProvider
                 'matieres' => Matiere::count(),
                 'fillieres' => Filiere::count(),
                 'niveaux' => Niveau::count(),
+                'paiements' => Paiement::count(),
             ];
 
             $pendingCommissions = Comission::where('statutcomission', '!=', 'Payée')->count();
+            $pendingPaiements = Paiement::where('statutpaiement', 'En attente')->count();
 
             $latestCommissions = Comission::with(['professeur:id,nom', 'etudiant:id,nom',])
                 ->latest('datecomission')
@@ -73,12 +76,28 @@ class AppServiceProvider extends ServiceProvider
                     ];
                 });
 
+            $latestPaiements = Paiement::with('etudiant:id,nom,prenom')
+                ->latest('datepaiement')
+                ->limit(5)
+                ->get()
+                ->map(function (Paiement $paiement): array {
+                    return [
+                        'id' => $paiement->id,
+                        'etudiant' => trim("{$paiement->etudiant?->prenom} {$paiement->etudiant?->nom}") ?: $paiement->etudiant?->nom,
+                        'montant' => $paiement->montant,
+                        'statut' => $paiement->statutpaiement,
+                        'date' => $paiement->datepaiement
+                            ? Carbon::parse($paiement->datepaiement)->format('d/m/Y')
+                            : null,
+                    ];
+                });
+
             $routeName = optional(request()->route())->getName();
 
             $pageNotifications = [
                 'dashboard' => [
                     'title' => 'Tableau de bord',
-                    'message' => "Synthèse générale : {$resourceCounts['etudiants']} étudiant(s), {$resourceCounts['professeurs']} professeur(s), {$pendingCommissions} commission(s) en attente.",
+                    'message' => "Synthèse générale : {$resourceCounts['etudiants']} étudiant(s), {$resourceCounts['professeurs']} professeur(s), {$pendingCommissions} commission(s) et {$pendingPaiements} paiement(s) en attente.",
                     'type' => 'info',
                 ],
                 'etudiants.index' => [
@@ -111,6 +130,11 @@ class AppServiceProvider extends ServiceProvider
                     'message' => "{$pendingCommissions} commission(s) à traiter. Ne laissez pas les paiements en suspens.",
                     'type' => $pendingCommissions > 0 ? 'warning' : 'success',
                 ],
+                'paiements.index' => [
+                    'title' => 'Gestion des paiements',
+                    'message' => "{$resourceCounts['paiements']} paiement(s) enregistrés dont {$pendingPaiements} en attente.",
+                    'type' => $pendingPaiements > 0 ? 'warning' : 'success',
+                ],
                 'niveaux.index' => [
                     'title' => 'Gestion des niveaux',
                     'message' => "{$resourceCounts['niveaux']} niveau(x) défini(s) pour organiser les groupes.",
@@ -125,6 +149,8 @@ class AppServiceProvider extends ServiceProvider
                 'pendingCommissions' => $pendingCommissions,
                 'latestCommissions' => $latestCommissions,
                 'recentEtudiants' => $recentEtudiants,
+                'latestPaiements' => $latestPaiements,
+                'pendingPaiements' => $pendingPaiements,
                 'pageNotification' => $pageNotification,
             ]);
         });

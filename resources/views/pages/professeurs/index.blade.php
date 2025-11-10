@@ -1,81 +1,83 @@
 @extends('layout.index')
 @section('content')
     <div class="container">
-        <div class="row col-md-12 d-flex justify-content-between">
-            <div class="col-md-6">
-                <h2>Table des Professeurs</h2>
-            </div>
-
-            <div class="col-md-6">
-                <a href="{{ route('professeurs.create') }}" class="btn btn-primary d-flex float-right">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
-                    </svg>
-                    Ajouter un professeur
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+            <h2 class="mb-3 mb-md-0">Professeurs</h2>
+            <div class="d-flex gap-2 w-100 w-md-auto">
+                <input id="professeurs-search" type="text" class="form-control" placeholder="Rechercher un professeur...">
+                <a href="{{ route('professeurs.create') }}" class="btn btn-primary">
+                    <i class="la la-plus mr-1"></i> Ajouter un professeur
                 </a>
             </div>
         </div>
-    </div>
 
-    <div style="overflow-x: auto; max-width: 100%;">
-        <table id="professeurs-table" class="table table-striped" style="width:100%;">
-            <thead>
-                <tr>
-                    <th style="white-space: nowrap;">ID</th>
-                    <th style="white-space: nowrap;">Nom</th>
-                    <th style="white-space: nowrap;">Prénom</th>
-                    <th style="white-space: nowrap;">Spécialité</th>
-                    <th style="white-space: nowrap;">Commission fixe</th>
-                    <th style="white-space: nowrap;">Groupes</th>
-                    <th style="white-space: nowrap;">Comissions</th>
-                    <th style="white-space: nowrap;">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($professeurs as $professeur)
-                    <tr>
-                        <td>{{ $professeur->id }}</td>
-                        <td>{{ $professeur->nom }}</td>
-                        <td>{{ $professeur->prenom }}</td>
-                        <td>{{ $professeur->specialite }}</td>
-                        <td>{{ number_format($professeur->comissionfixe, 2, ',', ' ') }}</td>
-                        <td>{{ $professeur->groupes_count }}</td>
-                        <td>{{ $professeur->comissions_count }}</td>
-                        <td>
-                            <div class="row">
-                                <div class="d-flex gap-3">
-                                    <a href="{{ route('professeurs.edit', $professeur->id) }}" class="btn btn-warning btn-sm p-2 m-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
-                                        </svg>
-                                        Modifier
-                                    </a>
-                                    <form action="{{ route('professeurs.destroy', $professeur->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce professeur ?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm p-2 m-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
-                                                <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
-                                            </svg>
-                                            Supprimer
-                                        </button>
-                                    </form>
+        <div class="row" id="professeurs-cards">
+            @forelse ($professeurs as $professeur)
+                <div class="col-12 col-md-6 col-lg-4 mb-4 professeur-card" data-name="{{ strtolower($professeur->prenom . ' ' . $professeur->nom) }}">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="avatar rounded-circle text-white d-flex align-items-center justify-content-center mr-3"
+                                    style="width: 48px; height: 48px; font-size: 1.25rem; background: linear-gradient(135deg, #f39c12, #d35400);">
+                                    {{ strtoupper(substr($professeur->prenom, 0, 1) . substr($professeur->nom, 0, 1)) }}
+                                </div>
+                                <div>
+                                    <h5 class="card-title mb-0">{{ $professeur->prenom }} {{ $professeur->nom }}</h5>
+                                    <small class="text-muted">Spécialité : {{ $professeur->specialite ?? '—' }}</small>
                                 </div>
                             </div>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+
+                            <div class="card-text flex-grow-1">
+                                <p class="mb-2">
+                                    <strong>Commission fixe :</strong>
+                                    {{ number_format($professeur->comissionfixe, 2, ',', ' ') }} MAD
+                                </p>
+                                <p class="mb-2">
+                                    <strong>Groupes encadrés :</strong> {{ $professeur->groupes_count }}
+                                </p>
+                                <p class="mb-2">
+                                    <strong>Commissions enregistrées :</strong> {{ $professeur->comissions_count }}
+                                </p>
+                            </div>
+
+                            <div class="mt-3 pt-3 border-top d-flex justify-content-between">
+                                <a href="{{ route('professeurs.edit', $professeur->id) }}" class="btn btn-outline-primary btn-sm">
+                                    <i class="la la-pencil mr-1"></i> Modifier
+                                </a>
+                                <form action="{{ route('professeurs.destroy', $professeur->id) }}" method="POST"
+                                    onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce professeur ?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        <i class="la la-trash mr-1"></i> Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col-12">
+                    <div class="alert alert-info">Aucun professeur enregistré pour le moment.</div>
+                </div>
+            @endforelse
+        </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/2.1.7/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.1.7/js/dataTables.bootstrap5.js"></script>
-
     <script>
-        new DataTable('#professeurs-table');
+        document.addEventListener('DOMContentLoaded', function () {
+            var searchInput = document.getElementById('professeurs-search');
+            var cards = document.querySelectorAll('.professeur-card');
+
+            searchInput.addEventListener('input', function () {
+                var query = this.value.trim().toLowerCase();
+
+                cards.forEach(function (card) {
+                    var name = card.getAttribute('data-name');
+                    card.style.display = name.includes(query) ? '' : 'none';
+                });
+            });
+        });
     </script>
 @endsection
 

@@ -10,6 +10,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MatiereController;
 use App\Http\Controllers\NiveauController;
 use App\Http\Controllers\ProfesseurController;
+use App\Http\Controllers\PaiementController;
 
 // Auth routes
 Route::middleware('guest')->group(function () {
@@ -78,4 +79,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/niveaux/{id}/edit', [NiveauController::class, 'edit'])->name('niveaux.edit');
     Route::put('/niveaux/{id}', [NiveauController::class, 'update'])->name('niveaux.update');
     Route::delete('/niveaux/{id}', [NiveauController::class, 'destroy'])->name('niveaux.destroy');
+
+    // routes des paiements
+    Route::get('/paiements', [PaiementController::class, 'index'])->name('paiements.index');
+    Route::get('/paiements/create', [PaiementController::class, 'create'])->name('paiements.create');
+    Route::post('/paiements', [PaiementController::class, 'store'])->name('paiements.store');
+    Route::get('/paiements/{id}/edit', [PaiementController::class, 'edit'])->name('paiements.edit');
+    Route::put('/paiements/{id}', [PaiementController::class, 'update'])->name('paiements.update');
+    Route::delete('/paiements/{id}', [PaiementController::class, 'destroy'])->name('paiements.destroy');
 });

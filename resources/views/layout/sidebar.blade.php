@@ -43,6 +43,16 @@
                             @endif
                         </a>
                     </li>
+                    <li class="nav-item {{ request()->routeIs('paiements.*') ? 'active' : '' }}">
+                        <a href="{{ route('paiements.index') }}">
+                            <i class="la la-money"></i>
+                            <p>Paiements</p>
+                            <span class="badge badge-success">{{ $resourceCounts['paiements'] ?? 0 }}</span>
+                            @if (($pendingPaiements ?? 0) > 0)
+                                <span class="badge badge-warning">{{ $pendingPaiements }} en attente</span>
+                            @endif
+                        </a>
+                    </li>
                     <li class="nav-item {{ request()->routeIs('etudiants.index') ? 'active' : '' }}">
                         <a href="{{ route('etudiants.index') }}">
                             <i class="la la-keyboard-o"></i>

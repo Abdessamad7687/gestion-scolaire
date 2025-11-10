@@ -22,6 +22,11 @@ class Etudiant extends Model
         return $this->hasMany(Paiement::class, 'etudiant_id');
     }
 
+    public function primaryPaiement()
+    {
+        return $this->hasOne(Paiement::class, 'etudiant_id')->latestOfMany('datepaiement');
+    }
+
     public function matieres()
     {
         return $this->belongsToMany(Matiere::class, 'etudiant_matiere');

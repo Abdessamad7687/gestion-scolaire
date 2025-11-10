@@ -116,6 +116,50 @@
                                 </li>
                             </ul>
                         </li>
+                        <li class="nav-item dropdown hidden-caret">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarPaymentsDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="la la-credit-card"></i>
+                                <span class="notification">{{ $pendingPaiements ?? 0 }}</span>
+                            </a>
+                            <ul class="dropdown-menu notif-box" aria-labelledby="navbarPaymentsDropdown">
+                                <li>
+                                    <div class="dropdown-title">
+                                        {{ ($pendingPaiements ?? 0) > 0 ? "{$pendingPaiements} paiement(s) en attente" : 'Aucun paiement en attente' }}
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="notif-center">
+                                        @forelse(($latestPaiements ?? collect()) as $paiement)
+                                            <a href="{{ route('paiements.edit', $paiement['id']) }}">
+                                                <div class="notif-icon {{ ($paiement['statut'] ?? '') === 'Payé' ? 'notif-success' : 'notif-warning' }}">
+                                                    <i class="la la-money"></i>
+                                                </div>
+                                                <div class="notif-content">
+                                                    <span class="block">
+                                                        {{ number_format($paiement['montant'] ?? 0, 2, ',', ' ') }} MAD
+                                                    </span>
+                                                    <span class="block small text-muted">
+                                                        {{ $paiement['etudiant'] ?? 'Étudiant' }}
+                                                    </span>
+                                                    @if (!empty($paiement['date']))
+                                                        <span class="time">{{ $paiement['date'] }}</span>
+                                                    @endif
+                                                    <span class="badge badge-{{ ($paiement['statut'] ?? '') === 'Payé' ? 'success' : 'warning' }}">
+                                                        {{ $paiement['statut'] ?? '—' }}
+                                                    </span>
+                                                </div>
+                                            </a>
+                                        @empty
+                                            <span class="small text-muted d-block px-3 py-2">Les derniers paiements apparaîtront ici.</span>
+                                        @endforelse
+                                    </div>
+                                </li>
+                                <li>
+                                    <a class="see-all" href="{{ route('paiements.index') }}"> <strong>Voir les paiements</strong> <i class="la la-angle-right"></i> </a>
+                                </li>
+                            </ul>
+                        </li>
                         <li class="nav-item dropdown">
                             <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"
                                 aria-expanded="false"> <img src="{{ asset('assets/img/profile.jpg') }}" alt="user-img"
